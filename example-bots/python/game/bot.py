@@ -22,6 +22,8 @@ class Bot(object):
             return "NORTH"
         elif dx == 0 and dy == 1:
             return "SOUTH"
+        elif dx == 0 and dy == 0:
+            return "STAY"
         else:
             raise Exception("Invalid move")
 

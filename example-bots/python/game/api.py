@@ -22,7 +22,7 @@ class Api(object):
         headers = {"Content-Type": "application/json"}
         req = func(self._get_url(endpoint),
                    headers=headers, data=json.dumps(body))
-        print("<<< {} {}".format(req.status_code, req.text))
+        # print("<<< {} {}".format(req.status_code, req.text))
         return req
 
     def bots_get(self, bot_token):

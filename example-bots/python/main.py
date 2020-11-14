@@ -8,14 +8,18 @@ from game.util import *
 from game.logic.random import RandomLogic
 from game.logic.first_diamond import FirstDiamondLogic
 from game.logic.random_diamond import RandomDiamondLogic
+from game.logic.suicider import SuiciderLogic
+from game.logic.collector import CollectorLogic
 from colorama import init, Fore, Back, Style
 
 init()
-BASE_URL = "http://localhost:8081/api"
+BASE_URL = "https://diamonds.etimo.se/api"
 CONTROLLERS = {
     "Random": RandomLogic,
     "FirstDiamond": FirstDiamondLogic,
     "RandomDiamond": RandomDiamondLogic,
+    "Suicider": SuiciderLogic,
+    "Collector": CollectorLogic,
 }
 
 ###############################################################################
@@ -109,7 +113,8 @@ bot_logic = logic_class()
 # Find a board to join
 #
 ###############################################################################
-current_board_id = args.board
+# current_board_id = args.board
+current_board_id = 2 
 if not current_board_id:
     # List active boards to find one we can join if we haven't specified one
     boards = bot.list_boards()
@@ -150,13 +155,14 @@ while True:
     # Calculate next move
     delta_x, delta_y = bot_logic.next_move(board_bot, board)
 
-    # Try to perform move
-    resp, status = bot.move(current_board_id, delta_x, delta_y)
-    if status == 409 or status == 403:
-        # Read new board state
-        board = bot.get_board(current_board_id)
-    else:
-        board = Board(resp)
+    if delta_x != 0 or delta_y != 0:
+        # Try to perform move
+        resp, status = bot.move(current_board_id, delta_x, delta_y)
+        if status == 409 or status == 403:
+            # Read new board state
+            board = bot.get_board(current_board_id)
+        else:
+            board = Board(resp)
 
     # Get new state
     board_bot = board.get_bot(bot)
@@ -166,7 +172,7 @@ while True:
 
     # Don't spam the board more than it allows!
     # sleep(move_delay * time_factor)
-    sleep(1)
+    sleep(move_delay)
 
 ###############################################################################
 #
