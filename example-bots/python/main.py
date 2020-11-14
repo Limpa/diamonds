@@ -10,6 +10,7 @@ from game.logic.first_diamond import FirstDiamondLogic
 from game.logic.random_diamond import RandomDiamondLogic
 from game.logic.suicider import SuiciderLogic
 from game.logic.collector import CollectorLogic
+from game.logic.annoying import AnnoyingLogic
 from colorama import init, Fore, Back, Style
 
 init()
@@ -20,6 +21,7 @@ CONTROLLERS = {
     "RandomDiamond": RandomDiamondLogic,
     "Suicider": SuiciderLogic,
     "Collector": CollectorLogic,
+    "Annoying": AnnoyingLogic,
 }
 
 ###############################################################################
@@ -113,8 +115,7 @@ bot_logic = logic_class()
 # Find a board to join
 #
 ###############################################################################
-# current_board_id = args.board
-current_board_id = 2 
+current_board_id = args.board
 if not current_board_id:
     # List active boards to find one we can join if we haven't specified one
     boards = bot.list_boards()
