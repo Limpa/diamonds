@@ -1,5 +1,8 @@
 import random
 from ..util import get_direction
+from ..util import random_move
+from ..util import compute_distance
+from ..util import position_equals
 
 
 class SuiciderLogic(object):
@@ -10,11 +13,13 @@ class SuiciderLogic(object):
         self.goal_base = "NallePuh"
         self.goal_base_pos = -1
 
-    def find_closest_diamond(self, board, position):
+    def find_closest_diamond(self, board, position, single):
         closest = 10000
         closest_index = -1
         for i in range(len(board.diamonds)):
-            dist = abs(position["x"] - board.diamonds[i].get('position')["x"]) + abs(position["y"] - board.diamonds[i].get('position')["y"])
+            if single and board.diamonds[i]["properties"]["points"] == 2:
+                continue
+            dist = compute_distance(position, board.diamonds[i].get('position'))
             if dist < closest:
                 closest = dist
                 closest_index = i
@@ -25,13 +30,13 @@ class SuiciderLogic(object):
     def find_suicide_position(self, board, board_bot):
         name = board_bot["properties"]["name"]
         offset = (0, 0)
-        if name == "helpNorth":
+        if name == "helpNorth" or name == "Ior":
             offset = (0, -1)
-        elif name == "helpSouth":
+        elif name == "helpSouth" or name == "Tiger":
             offset = (0, 1)
-        elif name == "helpWest":
+        elif name == "helpWest" or name == "Uggla":
             offset = (-1, 0)
-        elif name == "helpEast":
+        elif name == "helpEast" or name == "Nasse":
             offset = (1, 0)
 
         for gameObj in board.gameObjects:
@@ -46,9 +51,38 @@ class SuiciderLogic(object):
         for attr in dir(obj):
             print("obj.%s = %r" % (attr, getattr(obj, attr)))
             
+    def get_reset_pos(self, board):
+        for gameObj in board.gameObjects:
+            if gameObj['type'] == 'DiamondButtonGameObject':
+                return gameObj['position']
+
+    def avoid_home_and_players(self, delta_x, delta_y, self_pos, base_pos, gameObjects):
+        if delta_x == 0 and delta_y == 0:
+            return delta_x, delta_y
+        new_pos = {"x": self_pos["x"] + delta_x, "y": self_pos["y"] + delta_y}
+        rand_dir = 1 if random.random() > 0.5 else -1
+        if position_equals(new_pos, base_pos):
+            if delta_x != 0:
+                return 0, rand_dir
+            else:
+                return rand_dir, 0
+
+        for gameObj in gameObjects:
+            if gameObj["type"] != 'BotGameObject':
+                continue
+            if position_equals(new_pos, gameObj['position']):
+                if delta_x != 0:
+                    return 0, rand_dir
+                else:
+                    return rand_dir, 0
+
+        return delta_x, delta_y
+
+
 
     def next_move(self, board_bot, board):
         props = board_bot["properties"]
+        reset_pos = self.get_reset_pos(board)
 
         # Analyze new state
         if props["diamonds"] == 5:
@@ -56,9 +90,12 @@ class SuiciderLogic(object):
             if self.goal_base_pos == -1:
                 self.goal_base_pos = self.find_suicide_position(board, board_bot)
             self.goal_position = self.goal_base_pos 
+        elif compute_distance(board_bot["position"], reset_pos) <= 3 or len(board.diamonds) < 5:
+            self.goal_position = reset_pos
         else:
             # Move towards first diamond on board
-            self.goal_position = self.find_closest_diamond(board, board_bot["position"]) 
+            self.goal_position = self.find_closest_diamond(board, board_bot["position"], props['diamonds'] == 4) 
+        
 
         if self.goal_position:
             # Calculate move according to goal position
@@ -72,19 +109,9 @@ class SuiciderLogic(object):
                 self.goal_position["y"],
             )
 
-            if (cur_x, cur_y) == self.previous_position:
-                # We did not manage to move, lets take a turn to hopefully get out stuck position
-                if delta_x != 0:
-                    delta_y = delta_x * self.turn_direction
-                    delta_x = 0
-                elif delta_y != 0:
-                    delta_x = delta_y * self.turn_direction
-                    delta_y = 0
-                # Switch turn direction for next time
-                self.turn_direction = -self.turn_direction
-            self.previous_position = (cur_x, cur_y)
+            if (delta_x, delta_y) == (0, 0) and props["diamonds"] != 5: 
+                return random_move()
 
-            print(delta_x, delta_y)
-            return delta_x, delta_y
+            return self.avoid_home_and_players(delta_x, delta_y, board_bot["position"], props["base"], board.gameObjects)
 
         return 0, 0

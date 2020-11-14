@@ -141,7 +141,7 @@ if not current_board_id:
 #
 ###############################################################################
 board = bot.get_board(current_board_id)
-move_delay = board.data["minimumDelayBetweenMoves"] / 1000
+move_delay = (board.data["minimumDelayBetweenMoves"] / 1000) * 0.4
 
 ###############################################################################
 #
@@ -163,6 +163,8 @@ while True:
             board = bot.get_board(current_board_id)
         else:
             board = Board(resp)
+    else:
+        board = bot.get_board(current_board_id)
 
     # Get new state
     board_bot = board.get_bot(bot)
