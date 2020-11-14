@@ -11,13 +11,13 @@ class Api(object):
         return "{}{}".format(self.url, endpoint)
 
     def _req(self, endpoint, method, body):
-        print(
-            ">>> {} {} {}".format(
-                Style.BRIGHT + method.upper() + Style.RESET_ALL,
-                Fore.GREEN + endpoint + Style.RESET_ALL,
-                body,
-            )
-        )
+        # print(
+            # ">>> {} {} {}".format(
+                # Style.BRIGHT + method.upper() + Style.RESET_ALL,
+                # Fore.GREEN + endpoint + Style.RESET_ALL,
+                # body,
+            # )
+        # )
         func = getattr(requests, method)
         headers = {"Content-Type": "application/json"}
         req = func(self._get_url(endpoint),

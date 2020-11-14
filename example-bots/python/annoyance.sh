@@ -13,6 +13,6 @@ pipenv run start --token ffaff538-8581-4c5d-ae9c-1b5b20f88590 --board 2 --logic 
 pipenv run start --token 5e90739e-ed98-4bd4-97c2-409cfa9971ed --board 3 --logic Annoying &
 pipenv run start --token a70a0f5a-2e1c-4283-a810-02414cbfcf10 --board 4 --logic Annoying &
 i=$[$i+1]
-sleep 70
+sleep 65 
 done
 

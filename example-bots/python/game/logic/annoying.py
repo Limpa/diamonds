@@ -82,7 +82,6 @@ class AnnoyingLogic(object):
 
     def next_move(self, board_bot, board):
         props = board_bot["properties"]
-        reset_pos = self.get_reset_pos(board)
 
         # Analyze new state
         if props["diamonds"] == 5:
@@ -90,8 +89,6 @@ class AnnoyingLogic(object):
             if self.goal_base_pos == -1:
                 self.goal_base_pos = self.find_suicide_position(board, board_bot)
             self.goal_position = self.goal_base_pos 
-        elif compute_distance(board_bot["position"], reset_pos) <= 3 or len(board.diamonds) < 5:
-            self.goal_position = reset_pos
         else:
             # Move towards first diamond on board
             self.goal_position = self.find_closest_diamond(board, board_bot["position"], props['diamonds'] == 4) 
