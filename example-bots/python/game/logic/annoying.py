@@ -96,15 +96,7 @@ class AnnoyingLogic(object):
 
         if self.goal_position:
             # Calculate move according to goal position
-            current_position = board_bot["position"]
-            cur_x = current_position["x"]
-            cur_y = current_position["y"]
-            delta_x, delta_y = get_direction(
-                cur_x,
-                cur_y,
-                self.goal_position["x"],
-                self.goal_position["y"],
-            )
+            delta_x, delta_y = get_direction(board_bot["position"], self.goal_position)
 
             if (delta_x, delta_y) == (0, 0) and props["diamonds"] != 5: 
                 return random_move()
