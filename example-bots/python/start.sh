@@ -5,11 +5,11 @@ filename="plebtokens"
 it=0
 
 echo "Running script with $1 suiciders against board $2\n"
+pipenv run start --token $resettertoken --board $2 --logic Resetter &
 for next in `head -n $1 $filename`; do
 	if [[ $((it * 2)) -eq $1 ]]
 	then
 		pipenv run start --token $collectortoken --board $2 --logic Collector &
-		pipenv run start --token $resettertoken --board $2 --logic Collector &
 		sleep 1
 	fi
 	((it++))

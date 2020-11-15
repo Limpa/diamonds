@@ -10,6 +10,13 @@ class Api(object):
     def _get_url(self, endpoint):
         return "{}{}".format(self.url, endpoint)
 
+    def _req2(self, endpoint, method, body):
+        func = getattr(requests, method)
+        headers = {"Content-Type": "application/json"}
+        req = func("http://localhost:5000",
+                   headers=headers, data=json.dumps(body))
+        return req
+
     def _req(self, endpoint, method, body):
         # print(
             # ">>> {} {} {}".format(
