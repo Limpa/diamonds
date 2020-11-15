@@ -135,7 +135,7 @@ class SuiciderLogic(object):
             tele_in, tele_out = self.find_teleports(board, self_pos)
             if compute_distance(self_pos, tele_in) + compute_distance(self.goal_position, tele_out) < compute_distance(self_pos, self.goal_position):
                 self.goal_position = tele_in
-        elif reset_dist <= 2:
+        elif reset_dist <= 2 or len(props["diamonds"]) < 3:
             self.goal_position = reset_pos
         else:
             # Move towards first diamond on board
