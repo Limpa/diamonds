@@ -1,6 +1,6 @@
 #!/bin/bash
 collectortoken="9d4d7ffa-ed20-48c2-91d2-839ba8d2f0c5"
-filename="plebtokens"
+filename="plebtokens_new"
 it=0
 
 echo "Running script with $1 suiciders against board $2\n"
