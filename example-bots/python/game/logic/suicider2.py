@@ -65,6 +65,7 @@ class SuiciderLogic(object):
         dist = compute_distance(self_pos, self.goal_base_pos)
         if dist == 0:
             return self_pos
+        player_positions = 
         
         
 

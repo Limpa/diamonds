@@ -63,13 +63,13 @@ class SuiciderLogic(object):
     def find_suicide_position(self, board, board_bot):
         name = board_bot["properties"]["name"]
         offset = (0, 0)
-        if name == "helpNorth" or name == "Ior":
+        if name == "helpNorth" or name == "Ior" or name == "limpis":
             offset = (0, -1)
-        elif name == "helpSouth" or name == "Tiger":
+        elif name == "helpSouth" or name == "Tiger" or name == "hejhopp":
             offset = (0, 1)
-        elif name == "helpWest" or name == "Uggla":
+        elif name == "helpWest" or name == "Uggla" or name == "LilleRu":
             offset = (-1, 0)
-        elif name == "helpEast" or name == "Nasse":
+        elif name == "helpEast" or name == "Nasse" or name == "Kengu":
             offset = (1, 0)
 
         for gameObj in board.gameObjects:
@@ -78,8 +78,7 @@ class SuiciderLogic(object):
                 pos['x'] += offset[0]
                 pos['y'] += offset[1] 
                 return pos
-        return board_bot["properties"]["base"]
-
+        raise
 
     def dump(self, obj):
         for attr in dir(obj):
@@ -117,6 +116,7 @@ class SuiciderLogic(object):
     def next_move(self, board_bot, board):
         props = board_bot["properties"]
         reset_pos = self.get_reset_pos(board)
+        reset_dist = compute_distance(board_bot["position"], reset_pos)
 
         # Analyze new state
         if props["diamonds"] == 5 or props['millisecondsLeft'] < 5000:
@@ -135,14 +135,8 @@ class SuiciderLogic(object):
             tele_in, tele_out = self.find_teleports(board, self_pos)
             if compute_distance(self_pos, tele_in) + compute_distance(self.goal_position, tele_out) < compute_distance(self_pos, self.goal_position):
                 self.goal_position = tele_in
-        elif compute_distance(board_bot["position"], reset_pos) <= 3 or len(board.diamonds) < 7:
-            # Use teleporter if closer
-            self_pos = board_bot["position"]
-            tele_in, tele_out = self.find_teleports(board, self_pos)
-            if compute_distance(self_pos, tele_in) + compute_distance(reset_pos, tele_out) < compute_distance(self_pos, reset_pos):
-                self.goal_position = tele_in
-            else:
-                self.goal_position = reset_pos
+        elif reset_dist <= 2:
+            self.goal_position = reset_pos
         else:
             # Move towards first diamond on board
             self.goal_position = self.find_closest_diamond(board, board_bot["position"], props['diamonds'] == 4) 

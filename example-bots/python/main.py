@@ -11,6 +11,7 @@ from game.logic.random_diamond import RandomDiamondLogic
 from game.logic.suicider import SuiciderLogic
 from game.logic.collector import CollectorLogic
 from game.logic.annoying import AnnoyingLogic
+from game.logic.resetter import ResetterLogic
 from colorama import init, Fore, Back, Style
 
 init()
@@ -22,6 +23,7 @@ CONTROLLERS = {
     "Suicider": SuiciderLogic,
     "Collector": CollectorLogic,
     "Annoying": AnnoyingLogic,
+    "Resetter": ResetterLogic,
 }
 
 ###############################################################################
@@ -142,7 +144,7 @@ if not current_board_id:
 #
 ###############################################################################
 board = bot.get_board(current_board_id)
-move_delay = (board.data["minimumDelayBetweenMoves"] / 1000) * 0.4
+move_delay = (board.data["minimumDelayBetweenMoves"] / 1000) * 0.1
 
 ###############################################################################
 #
